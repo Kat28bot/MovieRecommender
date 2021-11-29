@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">MovieRecommender</string>
+    <string name="facebook_app_id">910966129858138</string>
+    <string name="fb_login_protocol_scheme">fb910966129858138</string>
+    <string name="default_web_client_id_">364415330843-3cdik116h43c8qgr6moh73fou1ld89eq.apps.googleusercontent.com</string>
+    <string name="facebook_client_token">364415330843-3cdik116h43c8qgr6moh73fou1ld89eq.apps.googleusercontent.com </string>
+    <string name="twitter_consumer_key">9cJoSwBWL1GxnxGyBX0lzc0xT</string>
+    <string name="twitter_consumer_secret">j9cUbmzpukouRZMggzvZXH4G51TvDYadGSD2eJeam1SPJX0Dza</string>
+    <string name="user_exists">user exsists</string>
+    <string name="DataBase_failure">database failure!</string>
+    <string name="register">"New user registered "</string>
+    <string name="database_failure">Database failure!</string>
+    <string name="user_exsists_not">User does NOT exsist!</string>
 </resources>

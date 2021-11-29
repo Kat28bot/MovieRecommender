@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "364415330843",
+    "firebase_url": "https://movierecommender-c45aa-default-rtdb.europe-west1.firebasedatabase.app/",
+    "project_id": "movierecommender-c45aa",
+    "storage_bucket": "movierecommender-c45aa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:364415330843:android:48b247d279a4d48da8e6be",
+        "android_client_info": {
+          "package_name": "com.example.movierecommender"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "364415330843-3cdik116h43c8qgr6moh73fou1ld89eq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9b22vg8GN9YJJ40Eb2MpUEaCTrE6Vl_E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "364415330843-3cdik116h43c8qgr6moh73fou1ld89eq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
