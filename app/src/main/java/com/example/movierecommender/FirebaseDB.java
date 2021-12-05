@@ -61,9 +61,21 @@ class FirebaseDB {
     public void addMovie(String id,String title,String url){
         Log.d("Add movie",id+" "+title+" "+url);
         dbreference=database.getReference().child("Movies");
-        dbreference.child(id).setValue(id);//.child(title).setValue()
-        dbreference.child(id).child("title").setValue(title);
-        dbreference.child(id).child("url").setValue(url);
+        dbreference.child(id).child("id").setValue(id);//.child(title).setValue()
+      dbreference.child(id).child("title").setValue(title);
+      dbreference.child(id).child("url").setValue(url);/*.addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+
+                ds.dataInserted();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                ds.databaseFailure();
+            }
+        });*/
     }
     public void checkIfExsistsAndAuthenticate(User us, DataStatus ds){
         dbreference=database.getReference().child("Users");

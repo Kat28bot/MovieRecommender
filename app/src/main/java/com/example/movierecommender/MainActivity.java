@@ -13,6 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -79,6 +82,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+//import info.movito.themoviedbapi.TmdbApi;
 ///<meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
 //        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
 
@@ -105,6 +109,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
  private String fullName;
 User user;
 FirebaseDatabase Fbdatabase;
+ArrayList<Movie> generalMovies;
+    RecyclerView recyclerView;
    // DatabaseReference dbreference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,7 +179,7 @@ FirebaseDatabase Fbdatabase;
 //twitter:
     //ParseTwitterUtils
 //db
-
+        generalMovies=new ArrayList<>();
         getMoviesFromAPI();
     }
 
@@ -422,87 +428,95 @@ AccessTokenTracker accessTokenTracker= new AccessTokenTracker() {
         // Toast.makeText(MainActivity.this," insert method"+ dbreference.getKey().toString(),Toast.LENGTH_LONG).show();
     }
     public void getMoviesFromAPI(){
+        Log.e("TmdbApi response","starting");
         OkHttpClient client = new OkHttpClient();
-
         Request request = new Request.Builder()
-                .url("https://imdb8.p.rapidapi.com/title/get-most-popular-movies")
+               // .url("https://api.themoviedb.org/3/discover/movie?api_key=3c1f4cac776f2a7a19dc882aaacdcd32&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_watch_monetization_types=flatrate")
+                //.url("https://api.themoviedb.org/3/list/1?api_key=3c1f4cac776f2a7a19dc882aaacdcd32")
+                //.url("https://api.themoviedb.org/3/discover/movie?api_key=3c1f4cac776f2a7a19dc882aaacdcd32&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_watch_monetization_types=flatrate")
+                //.url("https://api.themoviedb.org/3/search/movie?api_key=3c1f4cac776f2a7a19dc882aaacdcd32&language=en-US&query=Home%20alone&page=1&include_adult=false")
+                //.url("https://api.themoviedb.org/3/movie/top_rated?api_key=3c1f4cac776f2a7a19dc882aaacdcd32&language=en-US&page=")
+                .url("https://api.themoviedb.org/3/movie/popular?api_key=3c1f4cac776f2a7a19dc882aaacdcd32&language=en-US&page=1")
                 .get()
-                .addHeader("x-rapidapi-host", "imdb8.p.rapidapi.com")
-                .addHeader("x-rapidapi-key", "d25924abf1msh752583f245a9e45p12d1ffjsnb635b149fb10")
+                .addHeader("TmdbApi", "api.themoviedb.org")
+                .addHeader("TmdbApi-key", "3c1f4cac776f2a7a19dc882aaacdcd32")
                 .build();
-
+        Request request2 = new Request.Builder()
+                .url("https://api.themoviedb.org/3/movie/popular?api_key=3c1f4cac776f2a7a19dc882aaacdcd32&language=en-US&page=2")
+                .get()
+                .addHeader("TmdbApi", "api.themoviedb.org")
+                .addHeader("TmdbApi-key", "3c1f4cac776f2a7a19dc882aaacdcd32")
+                .build();
+        Request request3 = new Request.Builder()
+                .url("https://api.themoviedb.org/3/movie/popular?api_key=3c1f4cac776f2a7a19dc882aaacdcd32&language=en-US&page=3")
+                .get()
+                .addHeader("TmdbApi", "api.themoviedb.org")
+                .addHeader("TmdbApi-key", "3c1f4cac776f2a7a19dc882aaacdcd32")
+                .build();
+        Request request4 = new Request.Builder()
+                .url("https://api.themoviedb.org/3/movie/popular?api_key=3c1f4cac776f2a7a19dc882aaacdcd32&language=en-US&page=4")
+                .get()
+                .addHeader("TmdbApi", "api.themoviedb.org")
+                .addHeader("TmdbApi-key", "3c1f4cac776f2a7a19dc882aaacdcd32")
+                .build();
         try (Response response = client.newCall(request).execute()){
-            String myResponse=response.body().string();
-            Log.d("apii",myResponse);
-           String mR= myResponse.replace('"', ' ');
-           String mR2=mR.replaceAll(" ","");
-           String mR3=mR2.replaceAll("/title/","");
-           String mR4=mR3.replaceAll("/","");
-           String mR5=mR4.replace('[',' ');
-           String mR6=mR5.replace(']',' ');
-           String mR7=mR6.replaceAll(" ","");
-            String[] temp=mR7.split(",");
-         // List<String> titles =new ArrayList<String>();
+            Response response2=client.newCall(request2).execute();
+            Response response3=client.newCall(request3).execute();
+            Response response4=client.newCall(request4).execute();
+
+            String myResponse=response.body().string()+response2.body().string()+response3.body().string()+response4.body().string();
+            Log.e("TmdbApi response",myResponse);
+           // String resp=myResponse.replaceAll("\\}"," +");
+
+           String mR=myResponse.replace('"','|');
+          // String mR1=mR.re
+            String[] temp=mR.split("\\}");
+            Log.e("TmdbApi response","\nxd "+temp.length);
+
+            ItemArrayAdapter itemArrayAdapter = new ItemArrayAdapter(R.layout.item, generalMovies);
+            recyclerView = (RecyclerView) findViewById(R.id.recycler);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setItemAnimator(new DefaultItemAnimator());
+            recyclerView.setAdapter(itemArrayAdapter);
+
             FirebaseDB fb=new FirebaseDB();
-           // for(int i=0;i<temp.length;i++){
-             //   fb.addMovie(temp[i],"Pira","https://i.imgur.com/DvpvklR.png");
-            //}
-         for(int t=0;t<temp.length;t++){
-             // Log.d("apii",temp[t]);
-              //get-base: type,id,image(height,id,url,width),title,titleType, year
-            Request requestTitle = new Request.Builder()
-                      .url("https://imdb8.p.rapidapi.com/title/get-base?tconst="+temp[t])
-                      .get()
-                      .addHeader("x-rapidapi-host", "imdb8.p.rapidapi.com")
-                      .addHeader("x-rapidapi-key", "d25924abf1msh752583f245a9e45p12d1ffjsnb635b149fb10")
-                      .build();
-            Response responseTitle=client.newCall(requestTitle).execute();
-            String title=responseTitle.body().string();
-            String t1=title.replace('"',' ');
-            String t2=t1.replace("{"," ");
-            String t3=t2.replaceAll(" ","");
-            String[] values=t2.split(",");
-            String url=values[4];
-            String[] urliurl=url.split(":");
-            url=urliurl[1]+":"+urliurl[2];
-            String actualtitle=values[6];
-             String[] atitles=actualtitle.split(":");
-             actualtitle=atitles[1];
+            for(int i=1;i<temp.length;i++){//filmy
+                String[] tempFilm=temp[i].split(",");
+               // String[] ids=tempFilm[6].split(":");
+                String id="";
+                String title="";
+                String poster="";
+                for(int k=0;k<tempFilm.length;k++){//atrybuty filmu
+                   // Log.e("tempFilm",tempFilm[k]+" "+i+ " "+k);
+                    String[] ids=tempFilm[k].split(":");
+                   // tempFilm[k].replace("id","@");
+                    if(ids[0].equals("|id|")){
+                        id=tempFilm[k].split(":")[1];
+                    }else if(ids[0].equals("|title|")){
+                        String t=tempFilm[k].split(":")[1];
+                        title=t.replace("|","");
+                    }else if(ids[0].equals("|poster_path|")){
+                        String p=tempFilm[k].split(":")[1];;
+                        poster=p.replace("|","");
+                    }
+                }
+                Log.e("timeFilmy",id+" "+title+" "+poster);
+                Movie movie=new Movie(id,title,poster);
+                generalMovies.add(movie);
+               fb.addMovie(id,title,poster);
 
-             fb.addMovie(temp[t],actualtitle,url);
+            }
 
-             // Log.d("apii title",actualtitle);//titles.add();
-          }
+
+            // Populating list items
+            /*for(int i=0; i<100; i++) {
+                generalMovies.add(new Movie("Item " + i));
+            }*/
+           // fb.addMovie(temp[1],"Pira","https://i.imgur.com/DvpvklR.png");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        /*client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                call.cancel();
-            }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-
-                final String myResponse = response.body().string();
-
-                MainActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-
-                            JSONObject json = new JSONObject(myResponse);
-                           // statusTextView.setText(json.getJSONObject("data").getString("title")+ " "+json.getJSONObject("data").getString("id"));
-                        Log.d("apii",json.getJSONObject("data").getString("title"));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-            }
-        });*/
 
     }
 

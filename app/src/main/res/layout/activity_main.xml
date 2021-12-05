@@ -61,6 +61,7 @@
         app:srcCompat="@drawable/com_facebook_profile_picture_blank_portrait" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler"
         android:layout_width="409dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="1dp"
