@@ -429,6 +429,7 @@ AccessTokenTracker accessTokenTracker= new AccessTokenTracker() {
     }
     public void getMoviesFromAPI(){
         Log.e("TmdbApi response","starting");
+       /*
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                // .url("https://api.themoviedb.org/3/discover/movie?api_key=3c1f4cac776f2a7a19dc882aaacdcd32&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_watch_monetization_types=flatrate")
@@ -472,13 +473,48 @@ AccessTokenTracker accessTokenTracker= new AccessTokenTracker() {
           // String mR1=mR.re
             String[] temp=mR.split("\\}");
             Log.e("TmdbApi response","\nxd "+temp.length);
+            */
+        //LoadApi lApi = new LoadApi();
+        //lApi.getMoviesFromApi(lApi.getResponse(generalMovies.size()/20 +1));
+       // generalMovies.addAll(lApi.getMovies());
+        if(generalMovies.isEmpty()){
+            getMoviesFromApi(getResponse(1));
+        }
 
             ItemArrayAdapter itemArrayAdapter = new ItemArrayAdapter(R.layout.item, generalMovies);
+
             recyclerView = (RecyclerView) findViewById(R.id.recycler);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             recyclerView.setItemAnimator(new DefaultItemAnimator());
             recyclerView.setAdapter(itemArrayAdapter);
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
 
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (!recyclerView.canScrollVertically(1)) {
+                    int page=recyclerView.getAdapter().getItemCount()/20 +1;
+
+                    if(page>0&page<500){
+                        getMoviesFromApi(getResponse(page));
+                        itemArrayAdapter.notifyDataSetChanged();
+                    }
+                    // Load more
+                }
+               // if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    //recyclerView.getI
+                    //Call your method here for next set of data
+                  //  if(firstVisibleItem + visibleItemCount == totalItemCount)
+               // }
+            }
+        });
+
+        /*
             FirebaseDB fb=new FirebaseDB();
             for(int i=1;i<temp.length;i++){//filmy
                 String[] tempFilm=temp[i].split(",");
@@ -506,18 +542,72 @@ AccessTokenTracker accessTokenTracker= new AccessTokenTracker() {
                fb.addMovie(id,title,poster);
 
             }
-
+            */
 
             // Populating list items
             /*for(int i=0; i<100; i++) {
                 generalMovies.add(new Movie("Item " + i));
-            }*/
+            }
            // fb.addMovie(temp[1],"Pira","https://i.imgur.com/DvpvklR.png");
         } catch (IOException e) {
             e.printStackTrace();
+        }*/
+    }
+    public String getResponse(Integer page){
+        String myResponse="";
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+               .url("https://api.themoviedb.org/3/movie/popular?api_key=3c1f4cac776f2a7a19dc882aaacdcd32&language=en-US&page="+page)
+                .get()
+                .addHeader("TmdbApi", "api.themoviedb.org")
+                .addHeader("TmdbApi-key", "3c1f4cac776f2a7a19dc882aaacdcd32")
+                .build();
+        try (Response response = client.newCall(request).execute()){
+            myResponse=response.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return myResponse;
+    }
+    public void getMoviesFromApi(String myResponse){
+
+        String mR=myResponse.replace('"','|');
+        String[] temp=mR.split("\\}");
+        Log.e("TmdbApi response","\nxd "+temp.length);
+        for(int i=1;i<temp.length;i++){//filmy
+            String[] tempFilm=temp[i].split(",");
+            // String[] ids=tempFilm[6].split(":");
+            String id="";
+            String title="";
+            String poster="";
+            for(int k=0;k<tempFilm.length;k++){//atrybuty filmu
+                // Log.e("tempFilm",tempFilm[k]+" "+i+ " "+k);
+                String[] ids=tempFilm[k].split(":");
+                // tempFilm[k].replace("id","@");
+                if(ids[0].equals("|id|")){
+                    id=tempFilm[k].split(":")[1];
+                }else if(ids[0].equals("|title|")){
+                    String t=tempFilm[k].split(":")[1];
+                    title=t.replace("|","");
+                }else if(ids[0].equals("|poster_path|")){
+                    String p=tempFilm[k].split(":")[1];;
+                    poster=p.replace("|","");
+                }
+            }
+            Log.e("timeFilmy",id+" "+title+" "+poster);
+            Movie movie=new Movie(id,title,poster);
+            generalMovies.add(movie);
         }
 
-
     }
+    public String getTitleFromApi(){
+        String title="";
+        return title;
+    }
+    public String getPosterFromApi(){
+        String poster="";
+        return poster;
+    }
+
 
 }
