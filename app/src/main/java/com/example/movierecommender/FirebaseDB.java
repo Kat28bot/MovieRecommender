@@ -16,6 +16,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.facebook.FacebookSdk;
 import com.google.firebase.auth.OAuthProvider;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.Query;
 import com.squareup.picasso.Picasso;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,7 +46,7 @@ class FirebaseDB {
     {
        // if (database == null) {
             database = FirebaseDatabase.getInstance();
-            database.setPersistenceEnabled(true);
+//NIE USUWAJ// database.setPersistenceEnabled(true);//nie pamietam co to robi ale moze byc wazne!!!!
             dbreference = database.getReference();
             dbreference.keepSynced(true);
             // ...
@@ -88,7 +90,33 @@ class FirebaseDB {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Log.i("fbase","datachanged"+us.getEmail());
                 if(snapshot.exists()){
-                    //user=snapshot.getValue(User.class);
+                    GenericTypeIndicator<ArrayList<Integer>> t = new GenericTypeIndicator<ArrayList<Integer>>() {};
+                    //ArrayList<Integer> yourStringArray = snapshot.child("likedMovies").getValue(t);
+                    /*ArrayList<Integer> yourStringArray = new ArrayList<>();//snapshot.child("likedMovies").getValue(t);
+                    for (DataSnapshot dataValues : snapshot.child("likedMovies").getChildren()){
+                        Integer liked = dataValues.getValue(Integer.class);
+                        yourStringArray.add(liked);
+                    }*/
+                    String liked=snapshot.child("likedMovies").getValue().toString();
+                    String likedN=liked.replace("[","");
+                    String likedNo=likedN.replace("]","");
+                    String likedNi=likedNo.replaceAll(" ","");
+                    String[] likedM=likedNo.split(",");
+                    ArrayList<Integer> likedMoviesList=new ArrayList<>();
+                    for(int i=0;i<likedM.length;i++){
+                        String l=likedM[i].replaceAll(" ","");
+                        likedMoviesList.add(Integer.parseInt(l));
+                        Log.d("liked",likedMoviesList.get(i).toString());
+                    }
+                  //  Log.d("liked",snapshot.child("likedMovies").getValue().toString());
+                   // ArrayList<Integer> yourStringArray = snapshot.child("likedMovies").getChildren();
+                   /* for (DataSnapshot dataValues : snapshot.child("likedMovies").getChildren()){
+                        Integer liked = dataValues.getValue(Integer.class);
+                        yourStringArray.add(liked);
+                    }*/
+                   // user=snapshot.getValue(User.class);
+                    user=new User(us.getEmail(),us.getName(),us.getSurname(),likedMoviesList);
+                    //user=new User(us.getEmail(),us.getName(),us.getSurname(),snapshot.child("likedMovies").getValue());
                     Log.i("fbase","dta ex"+snapshot.getValue().toString());
                     ds.dataExists();
                 }else{
@@ -121,6 +149,12 @@ class FirebaseDB {
             }
         });
     }
+    public void addMovieToUser(String email,String movie){
+        dbreference.child(email).child("likedMovies").child(movie).setValue(movie);
+    }
+    public void removeMovieFromUser(String email,String movie){
+        dbreference.child(email).child("likedMovies").child(movie).removeValue();
 
+    }
 
 }

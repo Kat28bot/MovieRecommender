@@ -2,6 +2,7 @@ package com.example.movierecommender;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
     //All methods in this adapter are required for a bare minimum recyclerview adapter
     private int listItemLayout;
     private ArrayList<Movie> itemList;
+    public  String email;
     //public final Context context;
 
     // Constructor of the class
@@ -27,7 +29,10 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
         listItemLayout = layoutId;
         this.itemList = itemList;
     }
-
+    public ItemArrayAdapter(int layoutId, ArrayList<Movie> itemList,String email) {
+        listItemLayout = layoutId;
+        this.itemList = itemList;
+    }
     // get the size of the list
     @Override
     public int getItemCount() {
@@ -40,6 +45,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(listItemLayout, parent, false);
         ViewHolder myViewHolder = new ViewHolder(view);
+
         return myViewHolder;
     }
 
@@ -53,7 +59,7 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
 
        // Picasso.get().load("https://i.imgur.com/DvpvklR.png").noPlaceholder().into(holder.itemImage);
        Picasso.get().load("https://image.tmdb.org/t/p/original/"+itemList.get(listPosition).getPoster()).placeholder(R.drawable.ic_launcher_foreground).into(holder.itemImage);
-        itemId.setText(itemList.get(listPosition).getId());
+        itemId.setText(itemList.get(listPosition).getId()+","+email);
         Log.d("picasso"," "+itemList.get(listPosition).getPoster());
 
         itemImage.setVisibility(View.VISIBLE);
@@ -85,7 +91,11 @@ public class ItemArrayAdapter extends RecyclerView.Adapter<ItemArrayAdapter.View
         public void onClick(View view) {
             Log.d("onclick", "onClick " + getLayoutPosition() + " " + itemText.getText());
             final Intent intent=new Intent(context,MovieInfoActivity.class);
-            intent.putExtra("id", itemId.getText());
+            Context maincxt= context.getApplicationContext();
+            String[] intentText=itemId.getText().toString().split(",");
+            //intent.putExtra("id", itemId.getText());
+            intent.putExtra("id", intentText[0]);
+           intent.putExtra("email",intentText[1]);
 
             context.startActivity(intent);
         }

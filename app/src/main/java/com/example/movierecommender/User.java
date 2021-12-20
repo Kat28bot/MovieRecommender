@@ -9,14 +9,19 @@ class User {
     private String name;
     private String surname;
 
-    private ArrayList<String> likedMovies;
-
+    private ArrayList<Integer> likedMovies;
+public User(){
+email="";
+name="" ;
+surname="" ;
+likedMovies=new ArrayList<Integer>();
+}
     public User(String email,String name,String surname){
         //this.email=email;
         this.name=name;
         this.surname=surname;
-        this.likedMovies=new ArrayList<String>();
-        likedMovies.add("0");
+        this.likedMovies=new ArrayList<Integer>();
+        likedMovies.add(0);
         char[] lus=email.toCharArray();
         for(int i=0;i<lus.length;i++){
             if(lus[i]=='.'){
@@ -26,10 +31,10 @@ class User {
         String s=new String(lus);
         this.email=s;
     }
-    public User(String email,String name,String surname, ArrayList<String> liked){
+    public User(String email,String name,String surname, ArrayList<Integer> liked){
         this.name=name;
         this.surname=surname;
-        this.likedMovies=new ArrayList<String>();
+        this.likedMovies=new ArrayList<Integer>();
         for(int i=0;i<liked.size();i++){
             likedMovies.add(liked.get(i));
         }
@@ -57,7 +62,7 @@ class User {
 
 
 
-    public ArrayList<String> getLikedMovies() {
+    public ArrayList<Integer> getLikedMovies() {
         return likedMovies;
     }
 //setters:
@@ -75,7 +80,7 @@ class User {
 
 
 
-    public void setLikedMovies(ArrayList<String> likedMovies) {
+    public void setLikedMovies(ArrayList<Integer> likedMovies) {
         this.likedMovies = likedMovies;
     }
 }
